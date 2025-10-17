@@ -1,0 +1,140 @@
+<div class="island-demo-container">
+
+  <!-- Control Buttons -->
+  <div class="island-controls">
+    <button type="button" class="control-btn" [class.active]="islandState() === 'collapsed'"
+      (click)="setIslandState('collapsed')">
+      Collapsed
+    </button>
+    <button type="button" class="control-btn" [class.active]="islandState() === 'music'"
+      (click)="setIslandState('music')">
+      Music
+    </button>
+    <button type="button" class="control-btn" [class.active]="islandState() === 'timer'"
+      (click)="setIslandState('timer')">
+      Timer
+    </button>
+    <button type="button" class="control-btn" [class.active]="islandState() === 'call'"
+      (click)="setIslandState('call')">
+      Call
+    </button>
+  </div>
+  <div class="dynamic-island">
+    <div class="island-content">
+      <!-- Collapsed State -->
+      @if (islandState() === 'collapsed') {
+      <div class="island-collapsed-content">
+        <div class="pulse-dot"></div>
+      </div>
+      }
+
+      <!-- Music State -->
+      @if (islandState() === 'music') {
+      <div class="island-music-content">
+        <div class="music-header">
+          <img class="music-album-art" [src]="musicState().albumCover"/>
+            <!-- <img [ngSrc]="musicState().albumCover" [alt]="musicState().artist"> -->
+          <!-- </img> -->
+          <div class="music-info">
+            <div class="music-song">{{ musicState().song }}</div>
+            <div class="music-artist">{{ musicState().artist }}</div>
+          </div>
+          <div class="music-waveform">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="music-progress-section">
+          <div class="music-progress-bar">
+            <div class="music-progress-fill" [style.width]="musicState().progress + '%'"></div>
+          </div>
+          <div class="music-time-labels">
+            <span class="music-current-time">{{ musicState().currentTime }}</span>
+            <span class="music-remaining-time">{{ musicState().remainingTime }}</span>
+          </div>
+        </div>
+
+        <div class="music-controls">
+          <button type="button" class="music-control-btn music-previous">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path d="M6 6h2v12H6V6zm3.5 6l8.5 6V6l-8.5 6z"/>
+            </svg>
+          </button>
+          <button type="button" class="music-control-btn music-play-pause" (click)="toggleMusicPlayback()">
+            @if (musicState().isPlaying) {
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+              </svg>
+            } @else {
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            }
+          </button>
+          <button type="button" class="music-control-btn music-next">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <path d="M6 18l8.5-6L6 6v12zm10-12v12h2V6h-2z"/>
+            </svg>
+          </button>
+          <button type="button" class="music-control-btn music-airplay">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M6 22h12l-6-6-6 6zm.51-17.5h10.98C18.83 4.5 20 5.67 20 7.01V16c0 1.34-1.17 2.5-2.51 2.5h-2.96l-.5-.5h3.46c.82 0 1.51-.69 1.51-1.51V7.01c0-.82-.69-1.51-1.51-1.51H6.51C5.69 5.5 5 6.19 5 7.01V16c0 .82.69 1.51 1.51 1.51h3.46l-.5.5H6.51C5.17 18.01 4 16.84 4 15.5V7.01C4 5.67 5.17 4.5 6.51 4.5z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      }
+
+      <!-- Timer State -->
+      @if (islandState() === 'timer') {
+      <div class="island-timer-content">
+        <div class="timer-actions">
+          <button type="button" class="timer-btn timer-pause" (click)="toggleTimer()">
+            @if (!timer().isPaused) {
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+              </svg>
+            } @else {
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            }
+          </button>
+          <button type="button" class="timer-btn timer-cancel" (click)="cancelTimer()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="timer-display">
+          <div class="timer-label">{{ timer().label }}</div>
+          <div class="timer-time">{{ timer().time }}</div>
+        </div>
+      </div>
+      }
+
+      <!-- Call State -->
+      @if (islandState() === 'call') {
+      <div class="island-call-content">
+        <div class="call-avatar">{{ callState().callerImage }}</div>
+        <div class="call-info">
+          <div class="call-label">{{ callState().callerLabel }}</div>
+          <div class="call-name">{{ callState().callerName }}</div>
+        </div>
+        <div class="call-actions">
+          <button type="button" class="call-btn call-decline" (click)="declineCall()">
+            <span class="call-icon">📞</span>
+          </button>
+          <button type="button" class="call-btn call-answer" (click)="answerCall()">
+            <span class="call-icon">📞</span>
+          </button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+</div>

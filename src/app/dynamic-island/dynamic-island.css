@@ -1,0 +1,525 @@
+.island-demo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  padding: 2rem 1rem;
+  min-height: 300px;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.dynamic-island {
+  position: relative;
+  width: 126px;
+  height: 37px;
+  background: #010004;
+  border-radius: 33px;
+  overflow: hidden;
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.island-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Collapsed State */
+.island-collapsed-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 0.5rem;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite, glow 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Music State - Expanded View */
+.island-music-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+}
+
+.music-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.music-album-art {
+  width: 64px;
+  height: 64px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+
+.music-album-art:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+.music-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.music-song {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.music-artist {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.music-waveform {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.music-waveform span {
+  width: 3px;
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.8));
+  border-radius: 2px;
+  animation: wave 1s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+  transition: background 0.3s ease;
+}
+
+.music-waveform:hover span {
+  background: linear-gradient(to top, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 1));
+}
+
+.music-waveform span:nth-child(1) {
+  height: 8px;
+  animation-delay: 0s;
+  animation-duration: 0.8s;
+}
+
+.music-waveform span:nth-child(2) {
+  height: 18px;
+  animation-delay: 0.1s;
+  animation-duration: 1s;
+}
+
+.music-waveform span:nth-child(3) {
+  height: 14px;
+  animation-delay: 0.2s;
+  animation-duration: 0.9s;
+}
+
+.music-waveform span:nth-child(4) {
+  height: 10px;
+  animation-delay: 0.3s;
+  animation-duration: 1.1s;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: scaleY(0.3);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleY(1.1);
+    opacity: 1;
+  }
+}
+
+/* Music Progress Section */
+.music-progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  width: 100%;
+}
+
+.music-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: height 0.2s ease;
+}
+
+.music-progress-bar:hover {
+  height: 6px;
+}
+
+.music-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+  position: relative;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.music-progress-fill::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease;
+}
+
+.music-progress-bar:hover .music-progress-fill::after {
+  opacity: 1;
+}
+
+.music-time-labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Music Controls */
+.music-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 0.5rem;
+}
+
+.music-control-btn {
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+  opacity: 0.85;
+  border-radius: 50%;
+  position: relative;
+}
+
+.music-control-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.music-control-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.music-control-btn:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.music-control-btn:active {
+  transform: scale(0.88);
+  transition-duration: 0.1s;
+}
+
+.music-control-btn:active::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.music-control-btn svg {
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.music-control-btn:hover svg {
+  transform: scale(1.05);
+}
+
+.music-airplay {
+  width: 36px;
+  height: 36px;
+}
+
+/* Timer State */
+.island-timer-content {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.timer-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.timer-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.timer-pause {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.timer-cancel {
+  background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+}
+
+
+.timer-display {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.125rem;
+}
+
+.timer-label {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #F59E0B;
+  letter-spacing: -0.01em;
+}
+
+.timer-time {
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #F59E0B;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  animation: timer-pulse 1s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+@keyframes timer-pulse {
+  0%, 100% {
+    opacity: 0.95;
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+  }
+}
+
+/* Call State */
+.island-call-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+}
+
+.call-avatar {
+  width: 56px;
+  height: 56px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.call-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.call-label {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+.call-name {
+  font-size: 1.125rem;
+  font-weight: 590;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.02em;
+}
+
+.call-actions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.call-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-size: 1.5rem;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.call-decline {
+  background: #FF3B30;
+}
+
+.call-answer {
+  background: #34C759;
+}
+
+.call-icon {
+  filter: brightness(0) invert(1);
+}
+
+/* Control Buttons */
+.island-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.control-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(120, 120, 128, 0.18);
+  border: none;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8125rem;
+  font-weight: 590;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: -0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.control-btn.active {
+  background: white;
+  color: black;
+}
