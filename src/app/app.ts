@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { DynamicIsland } from './dynamic-island/dynamic-island';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [DynamicIsland],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('angular-motion-example');
 }
