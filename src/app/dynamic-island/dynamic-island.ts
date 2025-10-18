@@ -38,8 +38,9 @@ const animateIslandTransition = (element: Element, state: IslandState): void => 
   animate(element, config, {
     duration: 0.55,
     type: 'spring',
-    stiffness: 260,
-    damping: 26,
+    stiffness: 465,
+    mass:0.75,
+    damping: 57,
   });
 };
 
@@ -96,41 +97,6 @@ export class DynamicIsland {
 
     // Animate island container
     animateIslandTransition(island, state);
-
-    let contentSelectors: string[] = [];
-
-    switch (state) {
-      case 'music':
-        contentSelectors = [
-          `.island-music-content .music-header > *`,
-          `.island-music-content .music-progress-section`,
-          `.island-music-content .music-controls > *`
-        ];
-        break;
-      case 'timer':
-        contentSelectors = [
-          `.island-timer-content .timer-actions > *`,
-          `.island-timer-content .timer-display`
-        ];
-        break;
-      case 'call':
-        contentSelectors = [
-          `.island-call-content > *`
-        ];
-        break;
-      case 'collapsed':
-        contentSelectors = [
-          `.island-collapsed-content > *`
-        ];
-        break;
-    }
-
-    contentSelectors.forEach(selector => {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        animateContentIn(elements);
-      }
-    });
   });
 
   setIslandState(state: IslandState): void {
