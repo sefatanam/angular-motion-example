@@ -1,0 +1,90 @@
+<div class="date-picker-container">
+  <!-- Tab Selector -->
+  <div class="tab-selector">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'dates'"
+      (click)="setActiveTab('dates')">
+      Dates
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'months'"
+      (click)="setActiveTab('months')">
+      Months
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="activeTab() === 'flexible'"
+      (click)="setActiveTab('flexible')">
+      Flexible
+    </button>
+  </div>
+
+  <!-- Calendars -->
+  <div class="calendars-container">
+    <div class="calendar">
+      <h3 class="calendar-month">{{ currentMonth }}</h3>
+      <div class="calendar-grid">
+        @for (dayName of monthNames; track dayName; let i = $index) {
+          <div class="day-name">{{ dayName }}</div>
+        }
+        @for (day of currentMonthDays; track $index) {
+          @if (day) {
+            <button
+              type="button"
+              class="calendar-day"
+              [class.disabled]="day.disabled"
+              [class.today]="day.isToday"
+              [disabled]="day.disabled"
+              (click)="selectDate(day)">
+              {{ day.date }}
+            </button>
+          } @else {
+            <div class="calendar-day empty"></div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="calendar">
+      <h3 class="calendar-month">{{ nextMonth }}</h3>
+      <div class="calendar-grid">
+        @for (dayName of monthNames; track dayName; let i = $index) {
+          <div class="day-name">{{ dayName }}</div>
+        }
+        @for (day of nextMonthDays; track $index) {
+          @if (day) {
+            <button
+              type="button"
+              class="calendar-day"
+              [class.disabled]="day.disabled"
+              [class.today]="day.isToday"
+              [disabled]="day.disabled"
+              (click)="selectDate(day)">
+              {{ day.date }}
+            </button>
+          } @else {
+            <div class="calendar-day empty"></div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Flexibility Options -->
+  <div class="flexibility-options">
+    @for (option of flexibilityOptions; track option.value) {
+      <button
+        type="button"
+        class="flexibility-btn"
+        [class.active]="selectedFlexibility() === option.value"
+        (click)="setFlexibility(option.value)">
+        {{ option.label }}
+      </button>
+    }
+  </div>
+</div>

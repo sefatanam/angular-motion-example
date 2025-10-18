@@ -1,0 +1,33 @@
+<div class="guest-picker-container">
+  @for (category of guestCategories; track category.id) {
+    <div class="guest-category">
+      <div class="category-info">
+        <div class="category-label">{{ category.label }}</div>
+        <div class="category-description">{{ category.description }}</div>
+      </div>
+      <div class="category-controls">
+        <button
+          type="button"
+          class="control-btn"
+          [class.disabled]="getCount(category.id) <= category.min"
+          [disabled]="getCount(category.id) <= category.min"
+          (click)="decrement(category.id, category.min)">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <rect x="2" y="5.5" width="8" height="1" rx="0.5"/>
+          </svg>
+        </button>
+        <span class="count-display">{{ getCount(category.id) }}</span>
+        <button
+          type="button"
+          class="control-btn"
+          [class.disabled]="getCount(category.id) >= category.max"
+          [disabled]="getCount(category.id) >= category.max"
+          (click)="increment(category.id, category.max)">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M6.5 2C6.5 1.72386 6.27614 1.5 6 1.5C5.72386 1.5 5.5 1.72386 5.5 2V5.5H2C1.72386 5.5 1.5 5.72386 1.5 6C1.5 6.27614 1.72386 6.5 2 6.5H5.5V10C5.5 10.2761 5.72386 10.5 6 10.5C6.27614 10.5 6.5 10.2761 6.5 10V6.5H10C10.2761 6.5 10.5 6.27614 10.5 6C10.5 5.72386 10.2761 5.5 10 5.5H6.5V2Z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+</div>

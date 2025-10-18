@@ -1,0 +1,80 @@
+<div class="airbnb-search-container">
+  <!-- Search Bar -->
+  <div class="search-bar" #searchBar>
+    <!-- Active Indicator Background -->
+    <div class="active-indicator" #indicator></div>
+
+    <!-- Where Section -->
+    <button
+      type="button"
+      class="search-section"
+      #whereSection
+      [class.active]="activeSection() === 'where'"
+      (click)="setActiveSection('where')">
+      <div class="section-label">Where</div>
+      <div class="section-value">
+        {{ whereValue() || 'Search destinations' }}
+      </div>
+    </button>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- When Section -->
+    <button
+      type="button"
+      class="search-section"
+      #whenSection
+      [class.active]="activeSection() === 'when'"
+      (click)="setActiveSection('when')">
+      <div class="section-label">When</div>
+      <div class="section-value">
+        {{ whenValue() || 'Add dates' }}
+      </div>
+    </button>
+
+    <!-- Divider -->
+    <div class="section-divider"></div>
+
+    <!-- Who Section -->
+    <button
+      type="button"
+      class="search-section who-section"
+      #whoSection
+      [class.active]="activeSection() === 'who'"
+      (click)="setActiveSection('who')">
+      <div class="section-content">
+        <div class="section-label">Who</div>
+        <div class="section-value">
+          {{ whoValue() || 'Add guests' }}
+        </div>
+      </div>
+
+      <!-- Search Button -->
+      <button
+        type="button"
+        class="search-btn"
+        (click)="handleSearch(); $event.stopPropagation()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="white">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+        </svg>
+        <span>Search</span>
+      </button>
+    </button>
+  </div>
+
+  <!-- Content Panel -->
+  @if (activeSection()) {
+    <div class="content-panel">
+      @if (activeSection() === 'where') {
+        <app-destination-suggestions (destinationSelected)="onDestinationSelected($event)" />
+      }
+      @if (activeSection() === 'when') {
+        <app-date-picker />
+      }
+      @if (activeSection() === 'who') {
+        <app-guest-picker />
+      }
+    </div>
+  }
+</div>

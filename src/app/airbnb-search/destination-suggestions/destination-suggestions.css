@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.suggestions-container {
+  padding: 2rem;
+}
+
+.suggestions-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+  color: #222;
+}
+
+.suggestions-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.suggestion-item:hover {
+  background: #f7f7f7;
+  border-color: #222;
+}
+
+.suggestion-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.suggestion-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.suggestion-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.suggestion-description {
+  font-size: 0.75rem;
+  color: #717171;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

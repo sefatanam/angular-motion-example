@@ -1,0 +1,17 @@
+<div class="suggestions-container">
+  <h3 class="suggestions-title">Suggested destinations</h3>
+  <div class="suggestions-list">
+    @for (destination of destinations; track destination.id) {
+      <button
+        type="button"
+        class="suggestion-item"
+        (click)="selectDestination(destination)">
+        <div class="suggestion-icon">{{ destination.icon }}</div>
+        <div class="suggestion-content">
+          <div class="suggestion-name">{{ destination.name }}</div>
+          <div class="suggestion-description">{{ destination.description }}</div>
+        </div>
+      </button>
+    }
+  </div>
+</div>
