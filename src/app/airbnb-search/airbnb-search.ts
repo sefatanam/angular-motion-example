@@ -26,6 +26,7 @@ export class AirbnbSearch {
   whoRef = viewChild<ElementRef>('whoSection');
   indicatorRef = viewChild<ElementRef>('indicator');
   searchBarRef = viewChild<ElementRef>('searchBar');
+  contentPanelRef = viewChild<ElementRef>('contentPanel');
 
   // @REVIEW: Effect to animate the indicator when active section changes
   private animateIndicator = effect(() => {
@@ -37,7 +38,16 @@ export class AirbnbSearch {
 
     if (!active) {
       // Hide indicator when nothing is active
-      animate(indicator, { opacity: 0, scale: 0.95 }, { duration: 0.2 });
+      animate(
+        indicator,
+        { opacity: 0, scale: 0.96 },
+        {
+          duration: 0.25,
+          type: 'spring',
+          stiffness: 500,
+          damping: 35
+        }
+      );
       return;
     }
 
@@ -53,26 +63,110 @@ export class AirbnbSearch {
     const searchBarRect = searchBar.getBoundingClientRect();
     const sectionRect = section.getBoundingClientRect();
 
-    // Calculate position relative to search bar
+    // Calculate position relative to search bar parent
     const left = sectionRect.left - searchBarRect.left;
+    const top = sectionRect.top - searchBarRect.top;
     const width = sectionRect.width;
     const height = sectionRect.height;
 
-    // Animate indicator to match the active section
+    // Animate indicator to morph into the active section
     animate(
       indicator,
       {
         opacity: 1,
         scale: 1,
         left: `${left}px`,
+        top: `${top}px`,
         width: `${width}px`,
         height: `${height}px`
       },
       {
-        duration: 0.4,
+        duration: 0.45,
         type: 'spring',
-        stiffness: 400,
-        damping: 30
+        stiffness: 300,
+        damping: 25,
+        mass: 0.8
+      }
+    );
+  });
+
+  // @REVIEW: Effect to animate content panel with dimension morph and cross-fade
+  // Inspired by dynamic-island animation approach
+  private animateContentPanel = effect(() => {
+    const active = this.activeSection();
+    const contentPanel = this.contentPanelRef()?.nativeElement;
+    const searchBar = this.searchBarRef()?.nativeElement;
+
+    if (!contentPanel || !searchBar) return;
+
+    // Get the active section to position panel below it
+    let activeSectionRef: ElementRef | undefined;
+    if (active === 'where') activeSectionRef = this.whereRef();
+    else if (active === 'when') activeSectionRef = this.whenRef();
+    else if (active === 'who') activeSectionRef = this.whoRef();
+
+    if (!activeSectionRef) return;
+
+    const activeElement = activeSectionRef.nativeElement;
+    const searchBarRect = searchBar.getBoundingClientRect();
+    const sectionRect = activeElement.getBoundingClientRect();
+
+    // Calculate left position to align with active section
+    const leftPosition = sectionRect.left - searchBarRect.left;
+
+    // Get all child elements to animate
+    const children = Array.from(contentPanel.children) as HTMLElement[];
+    if (!children.length) return;
+
+    // Store current dimensions before content changes
+    const currentHeight = contentPanel.offsetHeight || 0;
+
+    // Temporarily remove height constraint and make children visible to measure true height
+    contentPanel.style.height = 'auto';
+    children.forEach(child => {
+      child.style.opacity = '1';
+      child.style.transform = 'none';
+    });
+
+    // Measure the maximum natural height of all content
+    const newHeight = Math.max(contentPanel.scrollHeight, contentPanel.offsetHeight);
+
+    // Now set initial state for content cross-fade animation
+    children.forEach(child => {
+      child.style.opacity = '0';
+      child.style.transform = 'scale(0.96) translateY(8px)';
+    });
+
+    // Animate panel dimensions and position (container morph - like dynamic-island)
+    animate(
+      contentPanel,
+      {
+        height: [currentHeight, newHeight],
+        left: `${leftPosition}px`
+      },
+      {
+        duration: 0.45,
+        type: 'spring',
+        stiffness: 300,
+        damping: 25,
+        mass: 0.8
+      }
+    );
+
+    // Animate content with cross-fade (content transition - like dynamic-island)
+    animate(
+      children,
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0
+      },
+      {
+        duration: 0.45,
+        type: 'spring',
+        stiffness: 300,
+        damping: 25,
+        mass: 0.8
       }
     );
   });

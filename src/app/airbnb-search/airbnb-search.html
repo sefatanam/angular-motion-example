@@ -65,7 +65,7 @@
 
   <!-- Content Panel -->
   @if (activeSection()) {
-    <div class="content-panel">
+    <div class="content-panel" #contentPanel>
       @if (activeSection() === 'where') {
         <app-destination-suggestions (destinationSelected)="onDestinationSelected($event)" />
       }
