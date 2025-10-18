@@ -111,8 +111,21 @@ export class AirbnbSearch {
     const searchBarRect = searchBar.getBoundingClientRect();
     const sectionRect = activeElement.getBoundingClientRect();
 
-    // Calculate left position to align with active section
-    const leftPosition = sectionRect.left - searchBarRect.left;
+    // Get search bar dimensions
+    const searchBarWidth = searchBar.offsetWidth;
+    const panelMinWidth = 600; // From CSS
+
+    // Calculate ideal left position aligned with active section
+    let leftPosition = sectionRect.left - searchBarRect.left;
+
+    // Ensure panel doesn't overflow beyond search bar's right edge
+    const potentialRightEdge = leftPosition + panelMinWidth;
+    if (potentialRightEdge > searchBarWidth) {
+      // Right-align panel with search bar to prevent overflow
+      leftPosition = searchBarWidth - panelMinWidth;
+      // Ensure it doesn't go negative
+      if (leftPosition < 0) leftPosition = 0;
+    }
 
     // Get all child elements to animate
     const children = Array.from(contentPanel.children) as HTMLElement[];
@@ -141,7 +154,7 @@ export class AirbnbSearch {
     animate(
       contentPanel,
       {
-        height: [currentHeight, newHeight],
+        // height: [currentHeight, newHeight],
         left: `${leftPosition}px`
       },
       {
