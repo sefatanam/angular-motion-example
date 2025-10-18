@@ -1,11 +1,18 @@
 :host {
   display: block;
   margin: 2rem auto;
-  max-width: 900px;
+  max-width: 850px;
 }
 
 .airbnb-search-container {
   position: relative;
+  /* @REVIEW: CSS custom properties for active section state */
+  --active-section: none;
+  --indicator-x: 0;
+  --indicator-y: 0;
+  --indicator-scale-x: 1;
+  --indicator-scale-y: 1;
+  --panel-align: start;
 }
 
 .search-bar {
@@ -24,19 +31,24 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* @REVIEW: Hardware-accelerated indicator using transform only */
 .active-indicator {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100px;
-  height: 100%;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: 0;
+  height: calc(100% - 1rem);
   background: white;
   border-radius: 60px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
   pointer-events: none;
   z-index: 1;
   opacity: 0;
-  will-change: transform, opacity, width, height, left, top;
+  /* @REVIEW: GPU-composited properties only */
+  will-change: transform, opacity;
+  transform: translate(var(--indicator-x), var(--indicator-y)) 
+             scale(var(--indicator-scale-x), var(--indicator-scale-y));
+  transform-origin: left center;
 }
 
 .search-section {
@@ -125,19 +137,37 @@
   height: 16px;
 }
 
+/* @REVIEW: CSS-driven content panel with hardware acceleration */
 .content-panel {
   position: absolute;
   top: calc(100% + 0.75rem);
-  left: 0;
-  width: 600px;
+  width: fit-content;
   max-width: calc(100vw - 2rem);
   background: white;
   border-radius: 32px;
   box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12), 0 4px 24px rgba(0, 0, 0, 0.08);
   z-index: 10;
   overflow: hidden;
-  will-change: height, left, transform, opacity;
-  transform-origin: top left;
+  /* @REVIEW: GPU-composited properties only */
+  will-change: transform, opacity;
+  transform-origin: top var(--panel-align);
+  opacity: 0;
+  transform: translateY(-16px);
+  /* @REVIEW: CSS-driven alignment based on active section */
+  left: var(--panel-x, 0.5rem);
+}
+
+/* @REVIEW: Panel alignment variants driven by CSS custom properties */
+.airbnb-search-container[data-active="where"] {
+  --panel-align: left;
+}
+
+.airbnb-search-container[data-active="when"] {
+  --panel-align: center;
+}
+
+.airbnb-search-container[data-active="who"] {
+  --panel-align: right;
 }
 
 /* Responsive adjustments */

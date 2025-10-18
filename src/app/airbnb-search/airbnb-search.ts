@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, signal, viewChild } from '@angular/core';
+import { Component, effect, ElementRef, signal, viewChild, afterNextRender, Injector, inject } from '@angular/core';
 import { animate } from 'motion';
 import { DestinationSuggestions } from './destination-suggestions/destination-suggestions';
 import { DatePicker } from './date-picker/date-picker';
@@ -13,6 +13,7 @@ type SectionType = 'where' | 'when' | 'who' | null;
   styleUrl: './airbnb-search.css'
 })
 export class AirbnbSearch {
+  private injector = inject(Injector);
 
   activeSection = signal<SectionType>(null);
 
@@ -20,7 +21,7 @@ export class AirbnbSearch {
   whenValue = signal('');
   whoValue = signal('');
 
-  // ViewChild references for each section
+  // ViewChild references for DOM elements
   whereRef = viewChild<ElementRef>('whereSection');
   whenRef = viewChild<ElementRef>('whenSection');
   whoRef = viewChild<ElementRef>('whoSection');
@@ -28,7 +29,7 @@ export class AirbnbSearch {
   searchBarRef = viewChild<ElementRef>('searchBar');
   contentPanelRef = viewChild<ElementRef>('contentPanel');
 
-  // @REVIEW: Effect to animate the indicator when active section changes
+  // Indicator animation effect - morphs background to active section
   private animateIndicator = effect(() => {
     const active = this.activeSection();
     const indicator = this.indicatorRef()?.nativeElement;
@@ -36,8 +37,8 @@ export class AirbnbSearch {
 
     if (!indicator || !searchBar) return;
 
+    // Hide indicator when nothing is active
     if (!active) {
-      // Hide indicator when nothing is active
       animate(
         indicator,
         { opacity: 0, scale: 0.96 },
@@ -51,7 +52,7 @@ export class AirbnbSearch {
       return;
     }
 
-    // Get the reference to the active section
+    // Get the active section element
     let sectionRef: ElementRef | undefined;
     if (active === 'where') sectionRef = this.whereRef();
     else if (active === 'when') sectionRef = this.whenRef();
@@ -63,7 +64,7 @@ export class AirbnbSearch {
     const searchBarRect = searchBar.getBoundingClientRect();
     const sectionRect = section.getBoundingClientRect();
 
-    // Calculate position relative to search bar parent
+    // Calculate position relative to search bar
     const left = sectionRect.left - searchBarRect.left;
     const top = sectionRect.top - searchBarRect.top;
     const width = sectionRect.width;
@@ -90,8 +91,7 @@ export class AirbnbSearch {
     );
   });
 
-  // @REVIEW: Effect to animate content panel with dimension morph and cross-fade
-  // Inspired by dynamic-island animation approach
+  // Content panel animation effect
   private animateContentPanel = effect(() => {
     const active = this.activeSection();
     const contentPanel = this.contentPanelRef()?.nativeElement;
@@ -99,7 +99,6 @@ export class AirbnbSearch {
 
     if (!contentPanel || !searchBar) return;
 
-    // Get the active section to position panel below it
     let activeSectionRef: ElementRef | undefined;
     if (active === 'where') activeSectionRef = this.whereRef();
     else if (active === 'when') activeSectionRef = this.whenRef();
@@ -107,82 +106,91 @@ export class AirbnbSearch {
 
     if (!activeSectionRef) return;
 
-    const activeElement = activeSectionRef.nativeElement;
-    const searchBarRect = searchBar.getBoundingClientRect();
-    const sectionRect = activeElement.getBoundingClientRect();
+    // Wait for Angular to render the new component
+    afterNextRender(() => {
+      const children = Array.from(contentPanel.children) as HTMLElement[];
+      if (!children.length) return;
 
-    // Get search bar dimensions
-    const searchBarWidth = searchBar.offsetWidth;
-    const panelMinWidth = 600; // From CSS
+      // STEP 1: Calculate where the panel should be positioned
+      const position = this.calculatePanelPosition(
+        active,
+        contentPanel.offsetWidth,
+        searchBar.offsetWidth
+      );
 
-    // Calculate ideal left position aligned with active section
-    let leftPosition = sectionRect.left - searchBarRect.left;
+      // STEP 2: Set children to hidden state (before animation)
+      children.forEach(child => {
+        child.style.opacity = '0';
+        child.style.transform = 'scale(0.96) translateY(8px)';
+      });
 
-    // Ensure panel doesn't overflow beyond search bar's right edge
-    const potentialRightEdge = leftPosition + panelMinWidth;
-    if (potentialRightEdge > searchBarWidth) {
-      // Right-align panel with search bar to prevent overflow
-      leftPosition = searchBarWidth - panelMinWidth;
-      // Ensure it doesn't go negative
-      if (leftPosition < 0) leftPosition = 0;
+      // STEP 3: Animate panel into view (drop down + position horizontally)
+      animate(
+        contentPanel,
+        {
+          opacity: 1,
+          x: position,
+          y: 0
+        },
+        {
+          duration: 0.45,
+          type: 'spring',
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8
+        }
+      );
+
+      // STEP 4: Animate children (cross-fade)
+      animate(
+        children,
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0
+        },
+        {
+          duration: 0.45,
+          type: 'spring',
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8
+        }
+      );
+    }, { injector: this.injector });
+  });
+
+  // Helper: Calculate horizontal position for content panel
+  private calculatePanelPosition(
+    section: SectionType,
+    panelWidth: number,
+    searchBarWidth: number
+  ): number {
+    const padding = 8;
+
+    // Determine position based on which section is active
+    let position: number;
+
+    if (section === 'where') {
+      // Where: Align to left edge
+      position = padding;
+    } else if (section === 'when') {
+      // When: Center the panel
+      position = (searchBarWidth - panelWidth) / 2;
+    } else if (section === 'who') {
+      // Who: Align to right edge
+      position = searchBarWidth - panelWidth - padding;
+    } else {
+      // Fallback: left edge
+      position = padding;
     }
 
-    // Get all child elements to animate
-    const children = Array.from(contentPanel.children) as HTMLElement[];
-    if (!children.length) return;
-
-    // Store current dimensions before content changes
-    const currentHeight = contentPanel.offsetHeight || 0;
-
-    // Temporarily remove height constraint and make children visible to measure true height
-    contentPanel.style.height = 'auto';
-    children.forEach(child => {
-      child.style.opacity = '1';
-      child.style.transform = 'none';
-    });
-
-    // Measure the maximum natural height of all content
-    const newHeight = Math.max(contentPanel.scrollHeight, contentPanel.offsetHeight);
-
-    // Now set initial state for content cross-fade animation
-    children.forEach(child => {
-      child.style.opacity = '0';
-      child.style.transform = 'scale(0.96) translateY(8px)';
-    });
-
-    // Animate panel dimensions and position (container morph - like dynamic-island)
-    animate(
-      contentPanel,
-      {
-        // height: [currentHeight, newHeight],
-        left: `${leftPosition}px`
-      },
-      {
-        duration: 0.45,
-        type: 'spring',
-        stiffness: 300,
-        damping: 25,
-        mass: 0.8
-      }
+    // Keep panel within bounds
+    return Math.max(
+      padding,
+      Math.min(position, searchBarWidth - panelWidth - padding)
     );
-
-    // Animate content with cross-fade (content transition - like dynamic-island)
-    animate(
-      children,
-      {
-        opacity: 1,
-        scale: 1,
-        y: 0
-      },
-      {
-        duration: 0.45,
-        type: 'spring',
-        stiffness: 300,
-        damping: 25,
-        mass: 0.8
-      }
-    );
-  });
+  }
 
   setActiveSection(section: SectionType): void {
     if (this.activeSection() === section) {

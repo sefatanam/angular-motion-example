@@ -1,9 +1,12 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .suggestions-container {
   padding: 2rem;
+  width: 600px;
+  max-width: 100%;
 }
 
 .suggestions-title {

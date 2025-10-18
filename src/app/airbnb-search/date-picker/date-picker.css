@@ -1,9 +1,12 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .date-picker-container {
   padding: 2rem;
+  width: 750px;
+  max-width: 100%;
 }
 
 .tab-selector {
