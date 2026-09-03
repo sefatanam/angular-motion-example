@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, signal, viewChild, afterNextRender, Injector, inject } from '@angular/core';
+import { Component, effect, ElementRef, signal, viewChild, afterNextRender, ChangeDetectionStrategy } from '@angular/core';
 import { animate } from 'motion';
 import { DestinationSuggestions } from './destination-suggestions/destination-suggestions';
 import { DatePicker } from './date-picker/date-picker';
@@ -10,10 +10,10 @@ type SectionType = 'where' | 'when' | 'who' | null;
   selector: 'app-airbnb-search',
   imports: [DestinationSuggestions, DatePicker, GuestPicker],
   templateUrl: './airbnb-search.html',
-  styleUrl: './airbnb-search.css'
+  styleUrl: './airbnb-search.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AirbnbSearch {
-  private injector = inject(Injector);
 
   activeSection = signal<SectionType>(null);
 
@@ -202,7 +202,7 @@ export class AirbnbSearch {
   }
 
   onDestinationSelected(destination: string): void {
-    this.whereValue.set(destination);
+    xthis.whereValue.set(destination);
     this.activeSection.set(null);
   }
 
